@@ -1,0 +1,25 @@
+# ============================================================================
+#  SpinQ Gemini — Bell/CHSH appka · Python závislosti
+# ============================================================================
+#
+#  DÔLEŽITÉ: Jadro aplikácie (ideálny simulátor + webový server + frontend)
+#  beží IBA na štandardnej knižnici Pythonu 3 — NEPOTREBUJE nič z tohto súboru.
+#  Stačí mať nainštalovaný Python 3 a appka funguje (backend "ideal").
+#
+#  Balíky nižšie nainštaluj LEN ak chceš:
+#    - spustiť spinqit simulátory  (backend "torch" / "basic"), alebo
+#    - riadiť reálne zariadenie SpinQ Gemini  (backend "nmr").
+#
+#  Inštalácia (na CIEĽOVOM zariadení, ideálne vo virtuálnom prostredí):
+#      pip install -r requirements.txt
+# ----------------------------------------------------------------------------
+
+# SDK pre SpinQ Gemini. Automaticky stiahne aj svoje závislosti
+# (numpy, torch, networkx, ...). Pozri https://doc.spinq.cn / pypi.org/project/spinqit
+spinqit
+
+# --- VOLITEĽNÉ ---------------------------------------------------------------
+# Odkomentuj, len ak chceš použiť pôvodné qiskit vizualizácie (plot_histogram).
+# Appka samotná ich nepotrebuje (grafy kreslí vlastné SVG bez knižníc).
+# qiskit
+# matplotlib

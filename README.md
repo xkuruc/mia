@@ -15,8 +15,15 @@ web/                 # frontend (HTML/CSS/JS, bez externých knižníc, SVG graf
   index.html         #   Teória · Experiment · Analýza · Diskusia
   style.css
   app.js
+requirements.txt     # Python závislosti (potrebné LEN pre spinqit backendy)
+check_env.py         # diagnostika cieľového zariadenia (stdlib)
 config.example.json  # vzor pripojenia k zariadeniu -> skopíruj na config.json
+SETUP.md             # podrobný návod na inštaláciu na inom počítači
 ```
+
+> **Inštalácia na inom zariadení:** pozri **[SETUP.md](SETUP.md)**. V skratke: jadro + web
+> + ideálny simulátor potrebujú **iba Python 3** (nič inštalovať). Pre spinqit
+> simulátory / reálne zariadenie: `pip install -r requirements.txt`.
 
 ## Rýchly štart (bez prístroja, bez inštalácie)
 
@@ -37,7 +44,8 @@ python3 run_chsh.py --sweep         # korelačná krivka E(a-b)
 ## So spinqit (lokálne simulátory)
 
 ```bash
-pip install spinqit         # podľa pokynov SpinQ
+python3 -m pip install -r requirements.txt   # stiahne spinqit + jeho závislosti
+python3 check_env.py                          # over, že "spinqit ... ✔ OK"
 python3 run_chsh.py --backend torch --shots 2048
 ```
 
