@@ -17,6 +17,7 @@ Príklady:
     # korelačná krivka E(a-b) namiesto CHSH
     python3 run_chsh.py --sweep --points 25
 """
+from __future__ import annotations  # podpora 'X | None' anotácií na Pythone 3.8/3.9
 
 import argparse
 import json
