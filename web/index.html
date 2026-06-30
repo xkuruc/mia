@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpinQ Gemini — Kvantové previazanie a Bellove nerovnosti</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>SpinQ Gemini — laboratórium kvantového previazania</h1>
+    <p class="subtitle">Výučba kvantovej informatiky a experimentálne overenie porušenia Bellových nerovností (CHSH)</p>
+    <div id="status" class="status">spojenie so serverom…</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="teoria">1 · Teória</button>
+    <button class="tab" data-tab="experiment">2 · Experiment</button>
+    <button class="tab" data-tab="analyza">3 · Analýza</button>
+    <button class="tab" data-tab="diskusia">4 · Diskusia</button>
+  </nav>
+
+  <!-- ================= TEÓRIA ================= -->
+  <section id="teoria" class="panel active">
+    <h2>Základy kvantovej informatiky</h2>
+
+    <article>
+      <h3>Qubit a superpozícia</h3>
+      <p>Klasický bit je 0 alebo 1. <b>Qubit</b> môže byť v <b>superpozícii</b> oboch:
+        <span class="eq">|ψ⟩ = α|0⟩ + β|1⟩</span>, kde α, β sú komplexné amplitúdy a
+        <span class="eq">|α|² + |β|² = 1</span>. Pravdepodobnosť nameranja 0 je |α|², nameranja 1 je |β|².</p>
+    </article>
+
+    <article>
+      <h3>Blochova sféra (interaktívne)</h3>
+      <p>Stav jedného qubitu sa dá zapísať uhlami θ a φ:
+        <span class="eq">|ψ⟩ = cos(θ/2)|0⟩ + e<sup>iφ</sup> sin(θ/2)|1⟩</span> a zobraziť ako bod na sfére.
+        Posuvníkmi meň stav a sleduj vektor aj amplitúdy.</p>
+      <div class="bloch-wrap">
+        <div id="bloch"></div>
+        <div class="bloch-controls">
+          <label>θ (polárny) <input type="range" id="theta" min="0" max="180" value="60"> <span id="thetaVal">60°</span></label>
+          <label>φ (azimut) <input type="range" id="phi" min="0" max="360" value="40"> <span id="phiVal">40°</span></label>
+          <div class="state-readout" id="stateReadout"></div>
+          <div class="hint">Hradlá: <b>X</b> = preklopenie, <b>H</b> = superpozícia, <b>Z</b> = fáza, <b>Ry(θ)</b> = rotácia okolo y.
+            <div class="gate-row">
+              <button class="mini" data-gate="H">H</button>
+              <button class="mini" data-gate="X">X</button>
+              <button class="mini" data-gate="Y">Y</button>
+              <button class="mini" data-gate="Z">Z</button>
+              <button class="mini" data-gate="reset">|0⟩</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article>
+      <h3>Dva qubity a kvantové previazanie</h3>
+      <p>Pri dvoch qubitoch existujú <b>previazané</b> stavy, ktoré sa nedajú zapísať ako súčin
+        stavov jednotlivých qubitov. Bellov stav
+        <span class="eq">|Φ⁺⟩ = (|00⟩ + |11⟩)/√2</span>
+        vznikne z |00⟩ hradlom <b>H</b> na prvý qubit a následným <b>CNOT</b>.
+        Po meraní sú výsledky obidvoch qubitov vždy zhodné (00 alebo 11) — dokonale skorelované,
+        hoci pred meraním nemal žiadny z nich určenú hodnotu.</p>
+      <p class="callout">Toto je <b>silnejšia</b> korelácia, než akú dovoľuje klasická fyzika s lokálnymi
+        skrytými premennými — a presne to kvantifikujú Bellove nerovnosti.</p>
+    </article>
+
+    <article>
+      <h3>Bellove nerovnosti a CHSH</h3>
+      <p>Lokálny realizmus (klasický opis, kde má každý qubit vopred dané vlastnosti a nič sa nešíri
+        rýchlejšie ako svetlo) obmedzuje korelácie meraní v rôznych bázach. CHSH parameter</p>
+      <p class="eq center">S = E(a,b) − E(a,b′) + E(a′,b) + E(a′,b′)</p>
+      <p>spĺňa v každej lokálne-realistickej teórii <span class="eq">|S| ≤ 2</span>. Kvantová mechanika
+        pre |Φ⁺⟩ dáva <span class="eq">E(a,b) = cos(a − b)</span> a pri optimálnych uhloch
+        (Alice {0°, 90°}, Bob {45°, 135°}) hodnotu</p>
+      <p class="eq center">S = 2√2 ≈ 2,828  &gt; 2.</p>
+      <p>Namerané <span class="eq">|S| &gt; 2</span> teda znamená, že korelácie sa nedajú vysvetliť
+        žiadnym lokálnym realistickým modelom.</p>
+      <p class="note">Korelácia <span class="eq">E</span> sa z meraní počíta ako
+        <span class="eq">E = P(00) + P(11) − P(01) − P(10)</span> (zhodné výsledky +1, rozdielne −1).</p>
+    </article>
+  </section>
+
+  <!-- ================= EXPERIMENT ================= -->
+  <section id="experiment" class="panel">
+    <h2>Príprava a spustenie experimentu</h2>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Backend (kde sa počíta)
+          <select id="backend">
+            <option value="ideal">Ideálny simulátor (bez závislostí)</option>
+            <option value="torch">spinqit — Torch simulátor</option>
+            <option value="basic">spinqit — Basic simulátor</option>
+            <option value="nmr">Reálne zariadenie SpinQ Gemini (NMR)</option>
+          </select>
+        </label>
+        <label>Počet meraní (shots)
+          <input type="number" id="shots" value="1024" min="1" max="100000" step="1">
+        </label>
+      </div>
+
+      <fieldset id="deviceBox" class="device-box" hidden>
+        <legend>Pripojenie k SpinQ Gemini</legend>
+        <div class="control-group">
+          <label>IP <input type="text" id="dev_ip" placeholder="172.22.22.3"></label>
+          <label>Port <input type="number" id="dev_port" placeholder="8989"></label>
+          <label>Účet <input type="text" id="dev_account" placeholder="SpinQ001"></label>
+          <label>Heslo <input type="password" id="dev_password" placeholder="••••••"></label>
+        </div>
+        <p class="hint">Polia môžeš nechať prázdne, ak je <code>config.json</code> nastavený na serveri.</p>
+      </fieldset>
+    </div>
+
+    <div class="circuit-info">
+      <h3>Kvantové obvody</h3>
+      <p><b>Bellov stav:</b> H(q0) → CNOT(q0,q1). <b>CHSH:</b> rovnaká príprava + rotácie
+        meracích báz Ry(−a) na q0 (Alice) a Ry(−b) na q1 (Bob), spolu <b>4 obvody</b> pre dvojice uhlov.</p>
+      <pre id="circuitText"></pre>
+    </div>
+
+    <div class="run-buttons">
+      <button id="runBell" class="primary">Spustiť Bellov stav</button>
+      <button id="runChsh" class="primary">Spustiť CHSH test (porušenie Bella)</button>
+      <button id="runSweep">Korelačná krivka E(a−b)</button>
+      <span id="busy" class="busy" hidden>⏳ počítam…</span>
+    </div>
+    <div id="runLog" class="run-log"></div>
+  </section>
+
+  <!-- ================= ANALÝZA ================= -->
+  <section id="analyza" class="panel">
+    <h2>Výsledky a analýza</h2>
+
+    <article id="bellResult" hidden>
+      <h3>Bellov stav — pravdepodobnosti</h3>
+      <div id="bellChart" class="chart"></div>
+      <p id="bellNote" class="note"></p>
+    </article>
+
+    <article id="chshResult" hidden>
+      <h3>CHSH test</h3>
+      <div id="chshGauge" class="chart"></div>
+      <table id="chshTable" class="data-table"></table>
+      <div id="chshVerdict" class="verdict"></div>
+    </article>
+
+    <article id="sweepResult" hidden>
+      <h3>Korelačná krivka — namerané vs. teória cos(a−b)</h3>
+      <div id="sweepChart" class="chart"></div>
+      <p class="note">Body = namerané hodnoty, plná krivka = predpoveď kvantovej mechaniky.</p>
+    </article>
+
+    <p id="noData" class="note">Zatiaľ žiadne dáta — spusti experiment v záložke „Experiment".</p>
+  </section>
+
+  <!-- ================= DISKUSIA ================= -->
+  <section id="diskusia" class="panel">
+    <h2>Fyzikálna interpretácia a obmedzenia NMR platformy</h2>
+
+    <article class="warn">
+      <h3>Prečo je to demonštrácia, nie loophole-free Bellov test</h3>
+      <p>SpinQ Gemini je <b>kvapalinový NMR</b> počítač pri <b>izbovej teplote</b>. Pracuje s
+        <b>ansámblom ~10¹⁸ molekúl</b> a tzv. <b>pseudo-pure</b> stavmi tvaru
+        <span class="eq">ρ = (1−ε)·I/4 + ε·|ψ⟩⟨ψ|</span> s veľmi malou polarizáciou
+        <span class="eq">ε ~ 10⁻⁵</span>.</p>
+      <p>Braunstein a kol. (PRL 83, 1054, 1999) dokázali, že takéto stavy blízko maximálne zmiešaného
+        stavu sú <b>separabilné</b> — teda <b>nie sú skutočne previazané</b> a pripúšťajú lokálne-realistický
+        opis. Experiment preto verne reprodukuje <b>kvantový formalizmus</b> (krivku cos(a−b), S ≈ 2,83),
+        ale <b>nie je</b> vyvrátením lokálneho realizmu.</p>
+    </article>
+
+    <article>
+      <h3>Rozdiel oproti fotónovým experimentom (Nobelova cena 2022)</h3>
+      <table class="data-table compare">
+        <tr><th></th><th>Fotóny (Clauser, Aspect, Zeilinger)</th><th>NMR SpinQ Gemini</th></tr>
+        <tr><td>Stav</td><td>skutočne previazané páry</td><td>separabilný pseudo-pure ansámbel</td></tr>
+        <tr><td>Meranie</td><td>jednotlivé páry, koincidencie</td><td>ansámblový (stredná hodnota signálu)</td></tr>
+        <tr><td>Lokalita</td><td>priestorovo oddelené, nastavenie počas letu</td><td>dva spiny v jednej molekule — nikdy oddelené</td></tr>
+        <tr><td>Loopholes</td><td>uzavreté (loophole-free, 2015)</td><td>žiadne nemožno uzavrieť</td></tr>
+        <tr><td>Záver</td><td>vyvrátenie lokálneho realizmu</td><td>demonštrácia kvantového formalizmu</td></tr>
+      </table>
+    </article>
+
+    <article>
+      <h3>Praktické obmedzenia merania</h3>
+      <ul>
+        <li>Krátke koherenčné časy (T₂ ~ 0,3–0,5 s) limitujú hĺbku obvodu.</li>
+        <li>Žiadna pravá „shot" štatistika — čítanie je analógový ansámblový signál (FID).</li>
+        <li>Malá polarizácia ε ~ 10⁻⁵ → veľký maximálne zmiešaný „pozadie", nutné spriemerovanie.</li>
+        <li>Fidelity hradiel ~0,99 (1-qubit) / ~0,98 (2-qubit), citlivosť na kalibráciu.</li>
+        <li>Neškálovateľnosť: separabilná oblasť klesá ako ~2/4ᴺ s počtom qubitov.</li>
+      </ul>
+    </article>
+  </section>
+
+  <footer>
+    <p>Lokálna výučbová aplikácia · SpinQ Gemini + SpinQit · bez externých knižníc</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "_comment": "Skopíruj na config.json a uprav podľa svojho zariadenia SpinQ Gemini. Hodnoty nižšie sú prebraté z tvojho pôvodného skriptu.",
+  "device": {
+    "ip": "172.22.22.3",
+    "port": 8989,
+    "account": "SpinQ001",
+    "password": "123456",
+    "task": "CHSH",
+    "desc": "Bell"
+  }
+}
